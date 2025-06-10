@@ -1,0 +1,10 @@
+# Instrucoes de Instalacao 
+ 
+1. Crie uma pasta C:\WhatsAppBot 
+2. Copie todos os arquivos desta pasta para C:\WhatsAppBot 
+3. Abra o Prompt de Comando como Administrador 
+4. Digite: cd C:\WhatsAppBot 
+5. Execute: install.bat 
+6. Aguarde a instalacao completar 
+7. Digite: pm2 logs whatsapp-bot 
+8. Escaneie o QR Code com seu WhatsApp 

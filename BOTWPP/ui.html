@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>WhatsApp Bot - Interface Simples</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    .container { width: 90%; margin: 20px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0002; padding: 20px; }
+    h2 { text-align: center; }
+    #qrcode { display: flex; justify-content: center; margin: 20px 0; }
+    #status { text-align: center; font-weight: bold; margin-bottom: 10px; }
+    .buttons { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+    button { padding: 10px 20px; border: none; border-radius: 4px; background: #007bff; color: #fff; cursor: pointer; font-size: 16px; }
+    button:disabled { background: #aaa; }
+    #logs { background: #222; color: #0f0; font-family: monospace; font-size: 13px; height: 120px; overflow-y: auto; border-radius: 4px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>WhatsApp Bot</h2>
+    <div id="status">Status: <span id="status-text">Aguardando...</span></div>
+    <div id="qrcode"><canvas id="qr-canvas"></canvas></div>
+    <div class="buttons">
+      <button id="start">Iniciar</button>
+      <button id="stop">Parar</button>
+      <button id="restart">Reiniciar</button>
+    </div>
+    <div id="logs"></div>
+  </div>
+  <script>
+    // Aqui será feita a integração com o backend do bot via Electron IPC
+    // Exemplo de manipulação de status, QR Code e logs
+    const { ipcRenderer } = require('electron');
+    const statusText = document.getElementById('status-text');
+    const logs = document.getElementById('logs');
+    const qrCanvas = document.getElementById('qr-canvas');
+
+    ipcRenderer.on('status', (event, status) => {
+      statusText.textContent = status;
+    });
+
+    ipcRenderer.on('log', (event, log) => {
+      logs.textContent += log + '\n';
+      logs.scrollTop = logs.scrollHeight;
+    });
+
+    ipcRenderer.on('qr', (event, qrDataUrl) => {
+      const ctx = qrCanvas.getContext('2d');
+      const img = new window.Image();
+      img.onload = function() {
+        qrCanvas.width = img.width;
+        qrCanvas.height = img.height;
+        ctx.clearRect(0, 0, qrCanvas.width, qrCanvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = qrDataUrl;
+    });
+
+    document.getElementById('start').onclick = () => ipcRenderer.send('bot-control', 'start');
+    document.getElementById('stop').onclick = () => ipcRenderer.send('bot-control', 'stop');
+    document.getElementById('restart').onclick = () => ipcRenderer.send('bot-control', 'restart');
+  </script>
+</body>
+</html> 
